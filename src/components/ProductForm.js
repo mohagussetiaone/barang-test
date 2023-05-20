@@ -1,21 +1,38 @@
 import React, { useState } from "react";
 
 const ProductForm = ({ onSubmit }) => {
+  const [barang, setBarang] = useState("");
   const [formData, setFormData] = useState({
     photo: null,
-    name: "",
-    purchasePrice: "",
-    sellingPrice: "",
-    stock: "",
+    namaBarang: "",
+    hargaBeli: "",
+    hargaJual: "",
+    stok: "",
   });
   const [formErrors, setFormErrors] = useState({});
   const MAX_FILE_SIZE = 100; // KB
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { id, value } = e.target;
+    if (id === "namabarang") {
+      setBarang(value);
+    }
+    var storedValues = localStorage.getItem("products");
+    if (storedValues) {
+      // Jika ada nilai yang tersimpan dalam local storage
+      storedValues = JSON.parse(storedValues);
+      // Memeriksa apakah nilai unik
+      if (storedValues.includes(barang)) {
+        // Jika nilai sudah ada dalam local storage
+        window.alert("Nilai harus unik!");
+      } else {
+        console.log("nama barang", barang);
+        setFormData({
+          ...formData,
+          [e.target.name]: e.target.value,
+        });
+      }
+    }
   };
 
   const handlePhotoChange = (e) => {
@@ -25,12 +42,12 @@ const ProductForm = ({ onSubmit }) => {
       if (fileSizeKB > MAX_FILE_SIZE) {
         setFormErrors({
           ...formErrors,
-          photo: `File size exceeds the maximum limit of ${MAX_FILE_SIZE}KB`,
+          photo: `Ukuran File Melebihi batas maksimum ${MAX_FILE_SIZE}KB`,
         });
       } else if (!file.type.includes("image/jpeg") && !file.type.includes("image/png")) {
         setFormErrors({
           ...formErrors,
-          photo: "Only JPG or PNG files are allowed",
+          photo: "Hanya file JPG atau PNG yang diizinkan",
         });
       } else {
         setFormErrors({
@@ -52,7 +69,7 @@ const ProductForm = ({ onSubmit }) => {
 
   return (
     <div className="modal-content">
-      <h2 className="text-lg font-bold mb-4">Add Product</h2>
+      <h2 className="text-lg font-bold mb-4">Barang</h2>
       <form onSubmit={handleFormSubmit}>
         <div className="mb-4">
           <label className="block text-sm font-bold">Photo:</label>
@@ -60,20 +77,20 @@ const ProductForm = ({ onSubmit }) => {
           {formErrors.photo && <p className="text-red-500">{formErrors.photo}</p>}
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-bold">Name:</label>
-          <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="w-full" />
+          <label className="block text-sm font-bold">Nama Barang:</label>
+          <input type="text" name="namaBarang" id="namabarang" value={formData.namaBarang} onChange={handleInputChange} className="w-full" />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-bold">Purchase Price:</label>
-          <input type="text" name="purchasePrice" value={formData.purchasePrice} onChange={handleInputChange} className="w-full" />
+          <label className="block text-sm font-bold">Harga Beli:</label>
+          <input type="text" name="hargaBeli" value={formData.hargaBeli} onChange={handleInputChange} className="w-full" />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-bold">Selling Price:</label>
-          <input type="text" name="sellingPrice" value={formData.sellingPrice} onChange={handleInputChange} className="w-full" />
+          <label className="block text-sm font-bold">Harga Jual:</label>
+          <input type="text" name="hargaJual" value={formData.hargaJual} onChange={handleInputChange} className="w-full" />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-bold">Stock:</label>
-          <input type="text" name="stock" value={formData.stock} onChange={handleInputChange} className="w-full" />
+          <label className="block text-sm font-bold">Stok:</label>
+          <input type="text" name="stok" value={formData.stok} onChange={handleInputChange} className="w-full" />
         </div>
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2">
           Add
